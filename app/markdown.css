@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+.markdown {
+  @apply text-base leading-relaxed;
+}
+
+.markdown > * + * {
+  @apply mt-4;
+}
+
+/* TÍTULOS */
+.markdown h1 {
+  @apply text-4xl font-bold leading-tight tracking-tight mt-8 mb-4;
+}
+
+.markdown h2 {
+  @apply text-3xl font-semibold leading-snug tracking-tight mt-8 mb-4;
+}
+
+.markdown h3 {
+  @apply text-2xl font-semibold leading-snug mt-6 mb-3;
+}
+
+.markdown h4 {
+  @apply text-xl font-semibold mt-5 mb-2;
+}
+
+.markdown h5 {
+  @apply text-lg font-semibold mt-4 mb-2;
+}
+
+.markdown h6 {
+  @apply text-base font-semibold uppercase tracking-wide mt-4 mb-2 text-zinc-500;
+}
+
+/* PARÁGRAFOS */
+.markdown p {
+  @apply text-base leading-relaxed;
+}
+
+/* LINKS */
+.markdown a {
+  @apply font-medium text-blue-600 underline underline-offset-2 hover:text-blue-700 hover:underline;
+}
+
+/* ÊNFASE */
+.markdown strong {
+  @apply font-semibold;
+}
+
+.markdown em {
+  @apply italic;
+}
+
+.markdown del {
+  @apply line-through text-zinc-500;
+}
+
+/* LISTAS */
+.markdown ul {
+  @apply list-disc pl-6 my-3 space-y-1;
+}
+
+.markdown ol {
+  @apply list-decimal pl-6 my-3 space-y-1;
+}
+
+.markdown li {
+  @apply leading-relaxed;
+}
+
+.markdown li > ul,
+.markdown li > ol {
+  @apply mt-2;
+}
+
+/* LISTA DE TAREFAS (GitHub flavored) */
+.markdown ul[class~="contains-task-list"] {
+  @apply list-none pl-0;
+}
+
+.markdown li[class~="task-list-item"] {
+  @apply list-none pl-0;
+}
+
+.markdown input[type="checkbox"] {
+  @apply mr-2 align-middle;
+}
+
+/* CITAÇÕES / BLOCKQUOTE */
+.markdown blockquote {
+  @apply border-l-4 border-zinc-200 pl-4 italic text-zinc-600 bg-zinc-50/60 py-2 rounded-r-lg my-4;
+}
+
+/* CÓDIGO INLINE */
+.markdown code {
+  @apply rounded bg-zinc-100 px-1.5 py-0.5 text-sm font-mono text-zinc-800;
+}
+
+/* CODE BLOCKS */
+.markdown pre {
+  @apply relative my-4 overflow-x-auto rounded-lg bg-zinc-900 text-zinc-100 text-sm p-4;
+}
+
+.markdown pre code {
+  @apply bg-transparent p-0 text-inherit whitespace-pre;
+}
+
+/* IMAGENS */
+.markdown img {
+  @apply max-w-full h-auto rounded-lg my-4;
+}
+
+.markdown figure {
+  @apply my-4 text-center;
+}
+
+.markdown figcaption {
+  @apply mt-2 text-sm text-zinc-500;
+}
+
+.markdown table {
+  @apply w-full border-collapse border-0 text-sm my-4;
+}
+
+.markdown thead {
+  @apply bg-zinc-900;
+}
+
+.markdown th,
+.markdown td {
+  @apply border border-zinc-900 px-3 py-2 text-left align-top;
+}
+
+.markdown th {
+  @apply font-semibold text-zinc-300;
+}
+
+.markdown tbody tr:nth-child(2n) {
+  @apply bg-zinc-900;
+}
+
+.markdown hr {
+  @apply my-8 border-t border-zinc-400;
+}
+
+/* SUP / SUB */
+.markdown sup {
+  @apply align-super text-xs;
+}
+
+.markdown sub {
+  @apply align-sub text-xs;
+}
+
+/* KBD */
+.markdown kbd {
+  @apply inline-flex items-center rounded border border-zinc-300 bg-zinc-50 px-1.5 py-0.5 font-mono text-xs font-medium shadow-sm;
+}
+
+/* CÓDIGO / TERMINAL ESPECIAL (opcional, se você quiser diferenciar) */
+.markdown pre[data-lang="bash"],
+.markdown pre[data-lang="shell"],
+.markdown pre[data-lang="sh"] {
+  @apply bg-zinc-900;
+}
+
+/* LISTAS DENTRO DE BLOCKQUOTE */
+.markdown blockquote ul,
+.markdown blockquote ol {
+  @apply my-2;
+}
+
+.markdown h1 a,
+.markdown h2 a,
+.markdown h3 a,
+.markdown h4 a,
+.markdown h5 a,
+.markdown h6 a {
+  @apply no-underline text-inherit;
+}
+
+.markdown h1 a:hover,
+.markdown h2 a:hover,
+.markdown h3 a:hover,
+.markdown h4 a:hover,
+.markdown h5 a:hover,
+.markdown h6 a:hover {
+  @apply underline;
+}
