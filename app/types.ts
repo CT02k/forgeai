@@ -4,3 +4,8 @@ export interface Bot {
   avatar: string;
   description: string;
 }
+
+export interface Token {
+  id: string;
+  username: string;
+}

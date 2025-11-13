@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function useChat(id: string) {
   const [loadingMessage, setLoadingMessage] = useState(false);
@@ -8,6 +8,17 @@ export default function useChat(id: string) {
   >([]);
 
   const storeKey = `chat_history_${id}`;
+
+  useEffect(() => {
+    async function loadHistory() {
+      const storedHistory = localStorage.getItem(storeKey);
+      if (storedHistory) {
+        setMessages(JSON.parse(storedHistory));
+      }
+    }
+
+    loadHistory();
+  }, [storeKey]);
 
   async function handleSendMessage(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
@@ -52,6 +63,5 @@ export default function useChat(id: string) {
     messages,
     loadingMessage,
     handleSendMessage,
-    setMessages,
   };
 }

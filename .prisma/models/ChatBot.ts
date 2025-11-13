@@ -29,6 +29,7 @@ export type ChatBotMinAggregateOutputType = {
   name: string | null
   description: string | null
   prompt: string | null
+  createdById: string | null
   createdAt: Date | null
 }
 
@@ -38,6 +39,7 @@ export type ChatBotMaxAggregateOutputType = {
   name: string | null
   description: string | null
   prompt: string | null
+  createdById: string | null
   createdAt: Date | null
 }
 
@@ -47,6 +49,7 @@ export type ChatBotCountAggregateOutputType = {
   name: number
   description: number
   prompt: number
+  createdById: number
   createdAt: number
   _all: number
 }
@@ -58,6 +61,7 @@ export type ChatBotMinAggregateInputType = {
   name?: true
   description?: true
   prompt?: true
+  createdById?: true
   createdAt?: true
 }
 
@@ -67,6 +71,7 @@ export type ChatBotMaxAggregateInputType = {
   name?: true
   description?: true
   prompt?: true
+  createdById?: true
   createdAt?: true
 }
 
@@ -76,6 +81,7 @@ export type ChatBotCountAggregateInputType = {
   name?: true
   description?: true
   prompt?: true
+  createdById?: true
   createdAt?: true
   _all?: true
 }
@@ -158,6 +164,7 @@ export type ChatBotGroupByOutputType = {
   name: string
   description: string
   prompt: string
+  createdById: string
   createdAt: Date
   _count: ChatBotCountAggregateOutputType | null
   _min: ChatBotMinAggregateOutputType | null
@@ -188,7 +195,9 @@ export type ChatBotWhereInput = {
   name?: Prisma.StringFilter<"ChatBot"> | string
   description?: Prisma.StringFilter<"ChatBot"> | string
   prompt?: Prisma.StringFilter<"ChatBot"> | string
+  createdById?: Prisma.StringFilter<"ChatBot"> | string
   createdAt?: Prisma.DateTimeFilter<"ChatBot"> | Date | string
+  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type ChatBotOrderByWithRelationInput = {
@@ -197,7 +206,9 @@ export type ChatBotOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   prompt?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  createdBy?: Prisma.UserOrderByWithRelationInput
 }
 
 export type ChatBotWhereUniqueInput = Prisma.AtLeast<{
@@ -209,7 +220,9 @@ export type ChatBotWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"ChatBot"> | string
   description?: Prisma.StringFilter<"ChatBot"> | string
   prompt?: Prisma.StringFilter<"ChatBot"> | string
+  createdById?: Prisma.StringFilter<"ChatBot"> | string
   createdAt?: Prisma.DateTimeFilter<"ChatBot"> | Date | string
+  createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type ChatBotOrderByWithAggregationInput = {
@@ -218,6 +231,7 @@ export type ChatBotOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   prompt?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ChatBotCountOrderByAggregateInput
   _max?: Prisma.ChatBotMaxOrderByAggregateInput
@@ -233,6 +247,7 @@ export type ChatBotScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"ChatBot"> | string
   description?: Prisma.StringWithAggregatesFilter<"ChatBot"> | string
   prompt?: Prisma.StringWithAggregatesFilter<"ChatBot"> | string
+  createdById?: Prisma.StringWithAggregatesFilter<"ChatBot"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ChatBot"> | Date | string
 }
 
@@ -243,6 +258,7 @@ export type ChatBotCreateInput = {
   description: string
   prompt: string
   createdAt?: Date | string
+  createdBy: Prisma.UserCreateNestedOneWithoutChatBotsInput
 }
 
 export type ChatBotUncheckedCreateInput = {
@@ -251,6 +267,7 @@ export type ChatBotUncheckedCreateInput = {
   name: string
   description: string
   prompt: string
+  createdById: string
   createdAt?: Date | string
 }
 
@@ -261,6 +278,7 @@ export type ChatBotUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutChatBotsNestedInput
 }
 
 export type ChatBotUncheckedUpdateInput = {
@@ -269,6 +287,7 @@ export type ChatBotUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -278,6 +297,7 @@ export type ChatBotCreateManyInput = {
   name: string
   description: string
   prompt: string
+  createdById: string
   createdAt?: Date | string
 }
 
@@ -296,7 +316,18 @@ export type ChatBotUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ChatBotListRelationFilter = {
+  every?: Prisma.ChatBotWhereInput
+  some?: Prisma.ChatBotWhereInput
+  none?: Prisma.ChatBotWhereInput
+}
+
+export type ChatBotOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type ChatBotCountOrderByAggregateInput = {
@@ -305,6 +336,7 @@ export type ChatBotCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   prompt?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -314,6 +346,7 @@ export type ChatBotMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   prompt?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -323,15 +356,143 @@ export type ChatBotMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   prompt?: Prisma.SortOrder
+  createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type ChatBotCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.ChatBotCreateWithoutCreatedByInput, Prisma.ChatBotUncheckedCreateWithoutCreatedByInput> | Prisma.ChatBotCreateWithoutCreatedByInput[] | Prisma.ChatBotUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.ChatBotCreateOrConnectWithoutCreatedByInput | Prisma.ChatBotCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.ChatBotCreateManyCreatedByInputEnvelope
+  connect?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
+export type ChatBotUncheckedCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.ChatBotCreateWithoutCreatedByInput, Prisma.ChatBotUncheckedCreateWithoutCreatedByInput> | Prisma.ChatBotCreateWithoutCreatedByInput[] | Prisma.ChatBotUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.ChatBotCreateOrConnectWithoutCreatedByInput | Prisma.ChatBotCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.ChatBotCreateManyCreatedByInputEnvelope
+  connect?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+}
+
+export type ChatBotUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatBotCreateWithoutCreatedByInput, Prisma.ChatBotUncheckedCreateWithoutCreatedByInput> | Prisma.ChatBotCreateWithoutCreatedByInput[] | Prisma.ChatBotUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.ChatBotCreateOrConnectWithoutCreatedByInput | Prisma.ChatBotCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.ChatBotUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.ChatBotUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.ChatBotCreateManyCreatedByInputEnvelope
+  set?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+  disconnect?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+  delete?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+  connect?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+  update?: Prisma.ChatBotUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.ChatBotUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.ChatBotUpdateManyWithWhereWithoutCreatedByInput | Prisma.ChatBotUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.ChatBotScalarWhereInput | Prisma.ChatBotScalarWhereInput[]
+}
+
+export type ChatBotUncheckedUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatBotCreateWithoutCreatedByInput, Prisma.ChatBotUncheckedCreateWithoutCreatedByInput> | Prisma.ChatBotCreateWithoutCreatedByInput[] | Prisma.ChatBotUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.ChatBotCreateOrConnectWithoutCreatedByInput | Prisma.ChatBotCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.ChatBotUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.ChatBotUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.ChatBotCreateManyCreatedByInputEnvelope
+  set?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+  disconnect?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+  delete?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+  connect?: Prisma.ChatBotWhereUniqueInput | Prisma.ChatBotWhereUniqueInput[]
+  update?: Prisma.ChatBotUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.ChatBotUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.ChatBotUpdateManyWithWhereWithoutCreatedByInput | Prisma.ChatBotUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.ChatBotScalarWhereInput | Prisma.ChatBotScalarWhereInput[]
+}
+
+export type ChatBotCreateWithoutCreatedByInput = {
+  id?: string
+  avatar: string
+  name: string
+  description: string
+  prompt: string
+  createdAt?: Date | string
+}
+
+export type ChatBotUncheckedCreateWithoutCreatedByInput = {
+  id?: string
+  avatar: string
+  name: string
+  description: string
+  prompt: string
+  createdAt?: Date | string
+}
+
+export type ChatBotCreateOrConnectWithoutCreatedByInput = {
+  where: Prisma.ChatBotWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChatBotCreateWithoutCreatedByInput, Prisma.ChatBotUncheckedCreateWithoutCreatedByInput>
+}
+
+export type ChatBotCreateManyCreatedByInputEnvelope = {
+  data: Prisma.ChatBotCreateManyCreatedByInput | Prisma.ChatBotCreateManyCreatedByInput[]
+  skipDuplicates?: boolean
+}
+
+export type ChatBotUpsertWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.ChatBotWhereUniqueInput
+  update: Prisma.XOR<Prisma.ChatBotUpdateWithoutCreatedByInput, Prisma.ChatBotUncheckedUpdateWithoutCreatedByInput>
+  create: Prisma.XOR<Prisma.ChatBotCreateWithoutCreatedByInput, Prisma.ChatBotUncheckedCreateWithoutCreatedByInput>
+}
+
+export type ChatBotUpdateWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.ChatBotWhereUniqueInput
+  data: Prisma.XOR<Prisma.ChatBotUpdateWithoutCreatedByInput, Prisma.ChatBotUncheckedUpdateWithoutCreatedByInput>
+}
+
+export type ChatBotUpdateManyWithWhereWithoutCreatedByInput = {
+  where: Prisma.ChatBotScalarWhereInput
+  data: Prisma.XOR<Prisma.ChatBotUpdateManyMutationInput, Prisma.ChatBotUncheckedUpdateManyWithoutCreatedByInput>
+}
+
+export type ChatBotScalarWhereInput = {
+  AND?: Prisma.ChatBotScalarWhereInput | Prisma.ChatBotScalarWhereInput[]
+  OR?: Prisma.ChatBotScalarWhereInput[]
+  NOT?: Prisma.ChatBotScalarWhereInput | Prisma.ChatBotScalarWhereInput[]
+  id?: Prisma.StringFilter<"ChatBot"> | string
+  avatar?: Prisma.StringFilter<"ChatBot"> | string
+  name?: Prisma.StringFilter<"ChatBot"> | string
+  description?: Prisma.StringFilter<"ChatBot"> | string
+  prompt?: Prisma.StringFilter<"ChatBot"> | string
+  createdById?: Prisma.StringFilter<"ChatBot"> | string
+  createdAt?: Prisma.DateTimeFilter<"ChatBot"> | Date | string
+}
+
+export type ChatBotCreateManyCreatedByInput = {
+  id?: string
+  avatar: string
+  name: string
+  description: string
+  prompt: string
+  createdAt?: Date | string
+}
+
+export type ChatBotUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ChatBotUncheckedUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type ChatBotUncheckedUpdateManyWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -342,7 +503,9 @@ export type ChatBotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name?: boolean
   description?: boolean
   prompt?: boolean
+  createdById?: boolean
   createdAt?: boolean
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chatBot"]>
 
 export type ChatBotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -351,7 +514,9 @@ export type ChatBotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   description?: boolean
   prompt?: boolean
+  createdById?: boolean
   createdAt?: boolean
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chatBot"]>
 
 export type ChatBotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -360,7 +525,9 @@ export type ChatBotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   name?: boolean
   description?: boolean
   prompt?: boolean
+  createdById?: boolean
   createdAt?: boolean
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chatBot"]>
 
 export type ChatBotSelectScalar = {
@@ -369,20 +536,33 @@ export type ChatBotSelectScalar = {
   name?: boolean
   description?: boolean
   prompt?: boolean
+  createdById?: boolean
   createdAt?: boolean
 }
 
-export type ChatBotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "avatar" | "name" | "description" | "prompt" | "createdAt", ExtArgs["result"]["chatBot"]>
+export type ChatBotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "avatar" | "name" | "description" | "prompt" | "createdById" | "createdAt", ExtArgs["result"]["chatBot"]>
+export type ChatBotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type ChatBotIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
+export type ChatBotIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+}
 
 export type $ChatBotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ChatBot"
-  objects: {}
+  objects: {
+    createdBy: Prisma.$UserPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     avatar: string
     name: string
     description: string
     prompt: string
+    createdById: string
     createdAt: Date
   }, ExtArgs["result"]["chatBot"]>
   composites: {}
@@ -778,6 +958,7 @@ readonly fields: ChatBotFieldRefs;
  */
 export interface Prisma__ChatBotClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -812,6 +993,7 @@ export interface ChatBotFieldRefs {
   readonly name: Prisma.FieldRef<"ChatBot", 'String'>
   readonly description: Prisma.FieldRef<"ChatBot", 'String'>
   readonly prompt: Prisma.FieldRef<"ChatBot", 'String'>
+  readonly createdById: Prisma.FieldRef<"ChatBot", 'String'>
   readonly createdAt: Prisma.FieldRef<"ChatBot", 'DateTime'>
 }
     
@@ -829,6 +1011,10 @@ export type ChatBotFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Omit specific fields from the ChatBot
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
   /**
    * Filter, which ChatBot to fetch.
    */
@@ -848,6 +1034,10 @@ export type ChatBotFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extension
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
+  /**
    * Filter, which ChatBot to fetch.
    */
   where: Prisma.ChatBotWhereUniqueInput
@@ -865,6 +1055,10 @@ export type ChatBotFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * Omit specific fields from the ChatBot
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
   /**
    * Filter, which ChatBot to fetch.
    */
@@ -914,6 +1108,10 @@ export type ChatBotFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
+  /**
    * Filter, which ChatBot to fetch.
    */
   where?: Prisma.ChatBotWhereInput
@@ -962,6 +1160,10 @@ export type ChatBotFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
+  /**
    * Filter, which ChatBots to fetch.
    */
   where?: Prisma.ChatBotWhereInput
@@ -1005,6 +1207,10 @@ export type ChatBotCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
+  /**
    * The data needed to create a ChatBot.
    */
   data: Prisma.XOR<Prisma.ChatBotCreateInput, Prisma.ChatBotUncheckedCreateInput>
@@ -1038,6 +1244,10 @@ export type ChatBotCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    */
   data: Prisma.ChatBotCreateManyInput | Prisma.ChatBotCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1052,6 +1262,10 @@ export type ChatBotUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the ChatBot
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
   /**
    * The data needed to update a ChatBot.
    */
@@ -1104,6 +1318,10 @@ export type ChatBotUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many ChatBots to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1118,6 +1336,10 @@ export type ChatBotUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the ChatBot
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
   /**
    * The filter to search for the ChatBot to update in case it exists.
    */
@@ -1144,6 +1366,10 @@ export type ChatBotDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the ChatBot
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
   /**
    * Filter which ChatBot to delete.
    */
@@ -1176,4 +1402,8 @@ export type ChatBotDefaultArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the ChatBot
    */
   omit?: Prisma.ChatBotOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatBotInclude<ExtArgs> | null
 }

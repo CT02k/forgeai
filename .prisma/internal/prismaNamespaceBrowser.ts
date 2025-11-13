@@ -19,6 +19,7 @@ export type * from '../models'
 export type * from './prismaNamespace'
 export const Decimal = runtime.Decimal
 export const ModelName = {
+  User: 'User',
   ChatBot: 'ChatBot'
 } as const
 
@@ -37,12 +38,23 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const UserScalarFieldEnum = {
+  id: 'id',
+  username: 'username',
+  password: 'password',
+  createdAt: 'createdAt'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
 export const ChatBotScalarFieldEnum = {
   id: 'id',
   avatar: 'avatar',
   name: 'name',
   description: 'description',
   prompt: 'prompt',
+  createdById: 'createdById',
   createdAt: 'createdAt'
 } as const
 
