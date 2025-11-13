@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
       <Image src="/logo.png" alt="ForgeAI Logo" width={200} height={200} />
-      <div className="flex gap-4 items-center mt-8">
+      <div className="flex flex-col md:flex-row gap-4 items-center mt-8">
         <input
           type="text"
           placeholder="Search bots..."
@@ -36,7 +36,7 @@ export default function Home() {
           Create
         </Link>
       </div>
-      <div className="flex flex-wrap mt-16 px-48">
+      <div className="flex flex-wrap mt-16 px-48 justify-center">
         {!loading && bots.length > 0 ? (
           bots
             .filter(
@@ -48,14 +48,14 @@ export default function Home() {
               <Link
                 key={bot.id}
                 href={`/bots/${bot.id}`}
-                className="flex gap-4 rounded-lg m-2 w-96 items-center p-3 bg-zinc-900 cursor-pointer hover:opacity-80 transition"
+                className="flex gap-4 rounded-lg m-2 w-72 md:w-96 items-center p-3 bg-zinc-900 cursor-pointer hover:opacity-80 transition"
               >
                 <Image
                   src={bot.avatar}
                   alt={`${bot.name} Avatar`}
                   height={128}
                   width={128}
-                  className="size-24 rounded-full"
+                  className="size-16 md:size-24 rounded-full"
                 />
                 <div>
                   <h2 className="text-2xl text-primary font-semibold mb-2">
