@@ -1,8 +1,10 @@
 import Link from "next/link";
 
 export default function SearchInput({
+  search,
   setSearch,
 }: {
+  search: string;
   setSearch: (value: string) => void;
 }) {
   return (
@@ -10,6 +12,7 @@ export default function SearchInput({
       <input
         type="text"
         placeholder="Search bots..."
+        value={search}
         className="h-10 px-3 rounded-lg bg-zinc-900 border border-zinc-800 w-80 text-white placeholder:text-zinc-600 focus:border-primary outline-none transition"
         onChange={(e) => setSearch(e.target.value)}
       />

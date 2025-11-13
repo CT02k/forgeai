@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen">
       <Image src="/logo.png" alt="ForgeAI Logo" width={200} height={200} />
-      <SearchInput setSearch={setSearch} />
+      <SearchInput search={search} setSearch={setSearch} />
       <BotGroup bots={bots} loading={loading} search={search} />
     </main>
   );
