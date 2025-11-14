@@ -10,7 +10,7 @@ export default function ChatWindow({
 }) {
   return (
     <div
-      className="flex flex-col grow overflow-y-auto py-4 scroll-smooth"
+      className="flex flex-col grow overflow-y-auto overflow-x-hidden py-4 scroll-smooth"
       id="chat-container"
     >
       {messages.map((message, index) => (
