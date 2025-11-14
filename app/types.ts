@@ -3,6 +3,7 @@ export interface Bot {
   name: string;
   avatar: string;
   description: string;
+  prompt: string;
 }
 
 export interface Token {

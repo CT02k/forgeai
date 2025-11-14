@@ -17,39 +17,45 @@ export async function POST(req: NextRequest) {
 
   const prompt = bot?.prompt || "You are a helpful assistant.";
 
-  const result = await fetch(
-    "https://ai.hackclub.com/proxy/v1/chat/completions",
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.HACKCLUB_AI_API_KEY}`,
+  try {
+    const result = await fetch(
+      "https://ai.hackclub.com/proxy/v1/chat/completions",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.HACKCLUB_AI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-5-mini",
+          messages: [
+            {
+              role: "system",
+              content: `Suas informações: Você é um chatbot criado por um usuário da ForgeAI, seu nome é ${bot?.name}. Descrição: ${bot?.description}. \n\n Instruções: ${prompt}\n\nPergunta: `,
+            },
+            ...history.map((msg) => ({
+              role: msg.role === "user" ? "user" : "assistant",
+              content: msg.content,
+            })),
+            {
+              role: "user",
+              content: `${message}`,
+            },
+          ],
+        }),
+        method: "POST",
       },
-      body: JSON.stringify({
-        model: "qwen/qwen3-32b",
-        messages: [
-          {
-            role: "system",
-            content: `Suas informações: Você é um chatbot criado por um usuário da ForgeAI, seu nome é ${bot?.name}. Descrição: ${bot?.description}. \n\n Instruções: ${prompt}\n\nPergunta: `,
-          },
-          ...history.map((msg) => ({
-            role: msg.role === "user" ? "user" : "assistant",
-            content: msg.content,
-          })),
-          {
-            role: "user",
-            content: `${message}`,
-          },
-        ],
-      }),
-      method: "POST",
-    },
-  );
+    );
 
-  const data = await result.json();
+    const data = await result.json();
 
-  const response = {
-    answer: data.choices[0].message.content,
-  };
+    const response = {
+      answer: data.choices[0].message.content,
+    };
 
-  return NextResponse.json(response);
+    return NextResponse.json(response);
+  } catch {
+    return NextResponse.json({
+      answer: "An error occoured",
+    });
+  }
 }
