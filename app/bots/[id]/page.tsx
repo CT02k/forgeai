@@ -17,13 +17,18 @@ export default function BotPage({
   const { id } = use(params);
 
   const { bot, loading } = useBot(id);
-  const { messages, loadingMessage, handleSendMessage } = useChat(id);
+  const { messages, loadingMessage, handleSendMessage, handleClearChat } =
+    useChat(id);
 
   return (
     <main className="flex flex-col h-screen items-center justify-center">
       {!loading && bot ? (
         <div className="w-1/2 bg-zinc-900 rounded-lg flex flex-col h-2/3">
-          <BotHeader bot={bot} />
+          <BotHeader
+            bot={bot}
+            onClearChat={handleClearChat}
+            canClear={messages.length > 0}
+          />
           <ChatWindow messages={messages} loadingMessage={loadingMessage} />
           <ChatInput
             loadingMessage={loadingMessage}

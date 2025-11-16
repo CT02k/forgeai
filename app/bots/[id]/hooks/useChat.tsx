@@ -59,9 +59,16 @@ export default function useChat(id: string) {
     chatContainer?.scrollTo(0, chatContainer.scrollHeight);
   }
 
+  function handleClearChat() {
+    setMessages([]);
+    setLoadingMessage(false);
+    localStorage.removeItem(storeKey);
+  }
+
   return {
     messages,
     loadingMessage,
     handleSendMessage,
+    handleClearChat,
   };
 }
