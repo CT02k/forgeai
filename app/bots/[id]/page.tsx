@@ -60,6 +60,17 @@ export default function BotPage({
       ) : (
         <div className="size-16 border-b-4 border-l-4 border-white rounded-full animate-spin"></div>
       )}
+      <div className="px-4 pb-4 text-center text-xs text-zinc-300 mt-3">
+        Powered by{" "}
+        <a
+          href="https://ai.hackclub.com"
+          target="_blank"
+          rel="noreferrer"
+          className="text-zinc-100 underline underline-offset-2"
+        >
+          ai.hackclub.com
+        </a>
+      </div>
     </main>
   );
 }

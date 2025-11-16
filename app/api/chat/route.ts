@@ -28,6 +28,9 @@ export async function POST(req: NextRequest) {
 
   const prompt = bot.prompt || "You are a helpful assistant.";
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 120_000);
+
   try {
     const result = await fetch(
       "https://ai.hackclub.com/proxy/v1/chat/completions",
@@ -54,6 +57,7 @@ export async function POST(req: NextRequest) {
           ],
         }),
         method: "POST",
+        signal: controller.signal,
       },
     );
 
@@ -78,11 +82,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ answer });
   } catch (error) {
     console.error("[CHAT_ROUTE]", error);
+    if (error instanceof Error && error.name === "AbortError") {
+      return NextResponse.json(
+        { error: "Request timed out after 120 seconds." },
+        { status: 504 },
+      );
+    }
     return NextResponse.json(
       {
         error: "Cannot generate a response.",
       },
       { status: 500 },
     );
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
