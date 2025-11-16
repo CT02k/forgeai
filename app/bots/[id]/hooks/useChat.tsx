@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 
+type ChatMessage = { role: "user" | "bot"; content: string };
+
 export default function useChat(id: string) {
   const [loadingMessage, setLoadingMessage] = useState(false);
-
-  const [messages, setMessages] = useState<
-    { role: "user" | "bot"; content: string }[]
-  >([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [retryMessage, setRetryMessage] = useState<string | null>(null);
 
   const storeKey = `chat_history_${id}`;
 
@@ -23,24 +24,44 @@ export default function useChat(id: string) {
   async function handleSendMessage(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
       const userMessage = e.currentTarget.value;
-      setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
       e.currentTarget.value = "";
-      setLoadingMessage(true);
-      scrollChatToBottom();
+      processMessage(userMessage);
+    }
+  }
+
+  async function processMessage(messageToSend: string) {
+    const trimmedMessage = messageToSend.trim();
+    if (!trimmedMessage) return;
+
+    const optimisticMessages: ChatMessage[] = [
+      ...messages,
+      { role: "user", content: trimmedMessage },
+    ];
+
+    setMessages(optimisticMessages);
+    setLoadingMessage(true);
+    setErrorMessage(null);
+    setRetryMessage(null);
+    scrollChatToBottom();
+
+    try {
       const response = await fetch(`/api/chat/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: userMessage,
+          message: trimmedMessage,
           botId: id,
-          history: messages
-            .filter((msg) => msg.content !== userMessage)
-            .slice(-10),
+          history: optimisticMessages.slice(-10),
         }),
       });
       const data = await response.json();
+
+      if (!response.ok || data.error) {
+        throw new Error(data?.error || "Cannot generate a response.");
+      }
+
       setMessages((prev) => {
         const updated = [
           ...prev,
@@ -51,6 +72,15 @@ export default function useChat(id: string) {
         return updated;
       });
       setLoadingMessage(false);
+    } catch (error) {
+      setMessages((prev) => prev.slice(0, -1));
+      setLoadingMessage(false);
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Nao foi possivel enviar a mensagem.",
+      );
+      setRetryMessage(trimmedMessage);
     }
   }
 
@@ -62,7 +92,14 @@ export default function useChat(id: string) {
   function handleClearChat() {
     setMessages([]);
     setLoadingMessage(false);
+    setErrorMessage(null);
+    setRetryMessage(null);
     localStorage.removeItem(storeKey);
+  }
+
+  function handleRetry() {
+    if (!retryMessage || loadingMessage) return;
+    processMessage(retryMessage);
   }
 
   return {
@@ -70,5 +107,8 @@ export default function useChat(id: string) {
     loadingMessage,
     handleSendMessage,
     handleClearChat,
+    errorMessage,
+    retryMessage,
+    handleRetry,
   };
 }

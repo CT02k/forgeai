@@ -15,7 +15,18 @@ export async function POST(req: NextRequest) {
     select: { prompt: true, name: true, description: true },
   });
 
-  const prompt = bot?.prompt || "You are a helpful assistant.";
+  if (!bot) {
+    return NextResponse.json({ error: "BOT not found." }, { status: 404 });
+  }
+
+  if (!process.env.HACKCLUB_AI_API_KEY) {
+    return NextResponse.json(
+      { error: "ai.hackclub.com key not configured." },
+      { status: 500 },
+    );
+  }
+
+  const prompt = bot.prompt || "You are a helpful assistant.";
 
   try {
     const result = await fetch(
@@ -26,11 +37,11 @@ export async function POST(req: NextRequest) {
           Authorization: `Bearer ${process.env.HACKCLUB_AI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: "openai/gpt-5-mini",
+          model: "google/gemini-2.5-flash",
           messages: [
             {
               role: "system",
-              content: `Suas informações: Você é um chatbot criado por um usuário da ForgeAI, seu nome é ${bot?.name}. Descrição: ${bot?.description}. \n\n Instruções: ${prompt}\n\nPergunta: `,
+              content: `Suas informacoes: Você é um chatbot criado por um usuario da ForgeAI, seu nome e ${bot.name}. Descricao: ${bot.description}. \n\n Instrucoes: ${prompt}\n\nPergunta: `,
             },
             ...history.map((msg) => ({
               role: msg.role === "user" ? "user" : "assistant",
@@ -48,14 +59,30 @@ export async function POST(req: NextRequest) {
 
     const data = await result.json();
 
-    const response = {
-      answer: data.choices[0].message.content,
-    };
+    if (!result.ok || data.error) {
+      const msg = data?.error || "ai.hackclub.com returned a error.";
+      return NextResponse.json(
+        { error: msg },
+        { status: result.status || 500 },
+      );
+    }
 
-    return NextResponse.json(response);
-  } catch {
-    return NextResponse.json({
-      answer: "An error occoured",
-    });
+    const answer = data.choices?.[0]?.message?.content;
+    if (!answer) {
+      return NextResponse.json(
+        { error: "Invalid response from API." },
+        { status: 502 },
+      );
+    }
+
+    return NextResponse.json({ answer });
+  } catch (error) {
+    console.error("[CHAT_ROUTE]", error);
+    return NextResponse.json(
+      {
+        error: "Cannot generate a response.",
+      },
+      { status: 500 },
+    );
   }
 }
