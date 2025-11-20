@@ -1,6 +1,5 @@
 "use client";
 import { useState, DragEvent } from "react";
-import Image from "next/image";
 import { Upload, Loader2 } from "lucide-react";
 
 export default function UploadAvatar({
@@ -9,7 +8,7 @@ export default function UploadAvatar({
   onChange: (url: string) => void;
 }) {
   const [loading, setLoading] = useState(false);
-  const [preview, setPreview] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [isDragging, setIsDragging] = useState(false);
 
   async function uploadFile(file: File) {
@@ -28,7 +27,7 @@ export default function UploadAvatar({
     setIsDragging(false);
 
     if (data?.url) {
-      setPreview(data.url);
+      setInputValue(data.url);
       onChange(data.url);
     }
   }
@@ -48,25 +47,15 @@ export default function UploadAvatar({
 
   return (
     <div className="flex flex-col gap-3">
-      {preview && (
-        <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-zinc-700">
-          <Image
-            src={preview}
-            alt="Preview"
-            className="object-cover w-full h-full"
-            width={256}
-            height={256}
-          />
-        </div>
-      )}
       <div className="flex flex-col gap-1">
         <input
           type="url"
-          placeholder="Paste the avatar URL"
+          placeholder="Paste or upload avatar URL"
           className="border border-zinc-700 bg-zinc-800 rounded-lg px-3 py-2 placeholder:text-zinc-500 outline-none transition focus:border-primary"
+          value={inputValue}
           onChange={(e) => {
             const url = e.target.value;
-            setPreview(url);
+            setInputValue(url);
             onChange(url);
           }}
         />

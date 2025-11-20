@@ -9,6 +9,8 @@ import UploadAvatar from "./components/UploadAvatar";
 
 export default function CreateBotPage() {
   const [bots, setBots] = useState<Bot[]>([]);
+  const [formName, setFormName] = useState("");
+  const [formDescription, setFormDescription] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
 
   const router = useRouter();
@@ -88,7 +90,7 @@ export default function CreateBotPage() {
       </aside>
 
       <section className="flex-1 ml-64 p-10">
-        <div className="max-w-xl mx-auto bg-zinc-900 p-6 rounded-xl shadow-xl">
+        <div className="max-w-xl mx-auto bg-zinc-900 border border-zinc-700 p-6 rounded-xl">
           <h1 className="text-3xl font-semibold text-center mb-6">
             Create New Bot
           </h1>
@@ -130,6 +132,7 @@ export default function CreateBotPage() {
               type="text"
               name="name"
               placeholder="Bot Name"
+              onChange={(e) => setFormName(e.target.value)}
             />
 
             <textarea
@@ -137,6 +140,7 @@ export default function CreateBotPage() {
               className="border border-zinc-700 bg-zinc-800 rounded-lg px-3 py-2 placeholder:text-zinc-500 outline-none transition focus:border-primary"
               name="description"
               placeholder="Description"
+              onChange={(e) => setFormDescription(e.target.value)}
             />
 
             <textarea
@@ -153,6 +157,26 @@ export default function CreateBotPage() {
               Create
             </button>
           </form>
+        </div>
+
+        <div className="max-w-xl mx-auto bg-zinc-900 border border-zinc-700 p-4 mt-8 rounded-xl">
+          <h2 className="text-xl font-semibold mb-4">Preview</h2>
+
+          <div className="flex items-center gap-4 mb-4">
+            <Image
+              src={avatarUrl || "/default.png"}
+              alt="Avatar preview"
+              width={128}
+              height={128}
+              className="rounded-full size-[60px]"
+            />
+            <div>
+              <p className="font-bold text-lg">{formName || "Bot name..."}</p>
+              <p className="text-zinc-400 text-sm">
+                {formDescription || "Description..."}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
     </main>
