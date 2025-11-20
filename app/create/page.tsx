@@ -16,9 +16,9 @@ export default function CreateBotPage() {
   const router = useRouter();
 
   async function loadBots() {
-    const res = await fetch("/api/auth");
+    const res = await fetch("/api/me/bots");
     const data = await res.json();
-    setBots(data.user.chatBots || []);
+    setBots(data.chatBots || []);
   }
 
   async function createBot({

@@ -64,7 +64,6 @@ export async function GET() {
         id: true,
         username: true,
         createdAt: true,
-        chatBots: true,
       },
     });
 
