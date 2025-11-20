@@ -5,9 +5,12 @@ import { Bot } from "../types";
 import Image from "next/image";
 import { Trash } from "lucide-react";
 import Link from "next/link";
+import UploadAvatar from "./components/UploadAvatar";
 
 export default function CreateBotPage() {
   const [bots, setBots] = useState<Bot[]>([]);
+  const [avatarUrl, setAvatarUrl] = useState("");
+
   const router = useRouter();
 
   async function loadBots() {
@@ -117,12 +120,9 @@ export default function CreateBotPage() {
               form.reset();
             }}
           >
-            <input
-              className="border border-zinc-700 bg-zinc-800 rounded-lg px-3 py-2 placeholder:text-zinc-500 outline-none transition focus:border-primary"
-              type="text"
-              name="avatar"
-              placeholder="Avatar URL (Optional)"
-            />
+            <UploadAvatar onChange={setAvatarUrl} />
+
+            <input type="hidden" name="avatar" value={avatarUrl} />
 
             <input
               required
