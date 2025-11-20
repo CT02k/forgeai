@@ -29,42 +29,39 @@ export async function POST(req: NextRequest) {
 
   const prompt = bot.prompt || "You are a helpful assistant.";
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120_000);
-
   try {
     const result = await axios.post(
       "https://ai.hackclub.com/proxy/v1/chat/completions",
+      {
+        model: "google/gemini-2.5-flash",
+        messages: [
+          {
+            role: "system",
+            content: `Suas informacoes: Você é um chatbot criado por um usuario da ForgeAI, seu nome e ${bot.name}. Descricao: ${bot.description}. \n\n Instrucoes: ${prompt}\n\nPergunta: `,
+          },
+          ...history.map((msg) => ({
+            role: msg.role === "user" ? "user" : "assistant",
+            content: msg.content,
+          })),
+          {
+            role: "user",
+            content: `${message}`,
+          },
+        ],
+      },
       {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.HACKCLUB_AI_API_KEY}`,
         },
-        body: JSON.stringify({
-          model: "google/gemini-2.5-flash",
-          messages: [
-            {
-              role: "system",
-              content: `Suas informacoes: Você é um chatbot criado por um usuario da ForgeAI, seu nome e ${bot.name}. Descricao: ${bot.description}. \n\n Instrucoes: ${prompt}\n\nPergunta: `,
-            },
-            ...history.map((msg) => ({
-              role: msg.role === "user" ? "user" : "assistant",
-              content: msg.content,
-            })),
-            {
-              role: "user",
-              content: `${message}`,
-            },
-          ],
-        }),
-        signal: controller.signal,
+        timeout: 120_000,
       },
     );
 
-    const data = await result.data;
+    const data = result.data;
 
     if (result.status !== 200 || data.error) {
-      const msg = data?.error || "ai.hackclub.com returned a error.";
+      const msg = data?.error || "ai.hackclub.com returned an error.";
       return NextResponse.json(
         { error: msg },
         { status: result.status || 500 },
@@ -80,21 +77,22 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ answer });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     console.error("[CHAT_ROUTE]", error);
-    if (error instanceof Error && error.name === "AbortError") {
+
+    if (error.code === "ECONNABORTED") {
       return NextResponse.json(
         { error: "Request timed out after 120 seconds." },
         { status: 504 },
       );
     }
+
     return NextResponse.json(
       {
         error: "Cannot generate a response.",
       },
       { status: 500 },
     );
-  } finally {
-    clearTimeout(timeoutId);
   }
 }
