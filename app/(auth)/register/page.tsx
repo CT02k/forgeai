@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,16 +11,17 @@ export default function RegisterPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/auth", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((v) => {
-      if (v.status === 200) {
-        router.push("/");
-      }
-    });
+    axios
+      .get("/api/auth", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((v) => {
+        if (v.status === 200) {
+          router.push("/");
+        }
+      });
   }, [router]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -29,12 +31,12 @@ export default function RegisterPage() {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    fetch("/api/auth", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-    })
+    axios
+      .post("/api/auth", {
+        body: JSON.stringify({ username, password }),
+      })
       .then((res) => {
-        return res.text();
+        return res.data;
       })
       .then(() => {
         router.push("/");

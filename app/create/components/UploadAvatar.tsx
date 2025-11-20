@@ -1,6 +1,7 @@
 "use client";
 import { useState, DragEvent } from "react";
 import { Upload, Loader2 } from "lucide-react";
+import axios from "axios";
 
 export default function UploadAvatar({
   onChange,
@@ -17,12 +18,9 @@ export default function UploadAvatar({
     const fd = new FormData();
     fd.append("file", file);
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: fd,
-    });
+    const res = await axios.post("/api/upload", fd);
 
-    const data = await res.json();
+    const data = await res.data;
     setLoading(false);
     setIsDragging(false);
 

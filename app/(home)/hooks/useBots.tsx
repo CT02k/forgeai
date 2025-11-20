@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -13,8 +14,8 @@ export default function TypingIndicator() {
     const querySearch = params.get("search") || "";
 
     async function fetchBots() {
-      const response = await fetch("/api/bots");
-      const data = await response.json();
+      const response = await axios.get("/api/bots");
+      const data = await response.data;
       setBots(data);
       setSearch(querySearch);
       setLoading(false);

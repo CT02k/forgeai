@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 
 type ChatMessage = { role: "user" | "bot"; content: string };
@@ -45,8 +46,7 @@ export default function useChat(id: string) {
     scrollChatToBottom();
 
     try {
-      const response = await fetch(`/api/chat/`, {
-        method: "POST",
+      const response = await axios.post(`/api/chat/`, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -56,9 +56,9 @@ export default function useChat(id: string) {
           history: optimisticMessages.slice(-10),
         }),
       });
-      const data = await response.json();
+      const data = await response.data;
 
-      if (!response.ok || data.error) {
+      if (response.status !== 200 || data.error) {
         throw new Error(data?.error || "Cannot generate a response.");
       }
 

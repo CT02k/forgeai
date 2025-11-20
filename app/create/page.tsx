@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Trash } from "lucide-react";
 import Link from "next/link";
 import UploadAvatar from "./components/UploadAvatar";
+import axios from "axios";
 
 export default function CreateBotPage() {
   const [bots, setBots] = useState<Bot[]>([]);
@@ -16,8 +17,8 @@ export default function CreateBotPage() {
   const router = useRouter();
 
   async function loadBots() {
-    const res = await fetch("/api/me/bots");
-    const data = await res.json();
+    const res = await axios.get("/api/me/bots");
+    const data = await res.data;
     setBots(data.chatBots || []);
   }
 
@@ -27,8 +28,7 @@ export default function CreateBotPage() {
     description,
     prompt,
   }: Omit<Bot, "id">) {
-    await fetch("/api/bots", {
-      method: "POST",
+    await axios.post("/api/bots", {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ avatar, name, description, prompt }),
     });
@@ -36,13 +36,13 @@ export default function CreateBotPage() {
   }
 
   async function deleteBot(id: string) {
-    await fetch(`/api/bots/${id}`, { method: "DELETE" });
+    await axios.delete(`/api/bots/${id}`);
     loadBots();
   }
 
   useEffect(() => {
     async function checkAuth() {
-      const res = await fetch("/api/auth");
+      const res = await axios.get("/api/auth");
 
       if (res.status !== 200) {
         router.push("/login");

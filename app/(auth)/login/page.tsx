@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,16 +11,17 @@ export default function LoginPage() {
   const router = useRouter();
 
   useEffect(() => {
-    fetch("/api/auth", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((v) => {
-      if (v.status === 200) {
-        router.push("/");
-      }
-    });
+    axios
+      .get("/api/auth", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((v) => {
+        if (v.status === 200) {
+          router.push("/");
+        }
+      });
   }, [router]);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -29,15 +31,15 @@ export default function LoginPage() {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    fetch("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ username, password }),
-    })
+    axios
+      .post("/api/auth/login", {
+        body: JSON.stringify({ username, password }),
+      })
       .then((res) => {
-        if (!res.ok) {
+        if (res.status !== 200) {
           throw new Error("Login failed");
         }
-        return res.json();
+        return res.data;
       })
       .then(() => {
         router.push("/");

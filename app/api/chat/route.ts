@@ -1,4 +1,5 @@
 import prisma from "@/app/lib/prisma";
+import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
   const timeoutId = setTimeout(() => controller.abort(), 120_000);
 
   try {
-    const result = await fetch(
+    const result = await axios.post(
       "https://ai.hackclub.com/proxy/v1/chat/completions",
       {
         headers: {
@@ -56,14 +57,13 @@ export async function POST(req: NextRequest) {
             },
           ],
         }),
-        method: "POST",
         signal: controller.signal,
       },
     );
 
-    const data = await result.json();
+    const data = await result.data;
 
-    if (!result.ok || data.error) {
+    if (result.status !== 200 || data.error) {
       const msg = data?.error || "ai.hackclub.com returned a error.";
       return NextResponse.json(
         { error: msg },

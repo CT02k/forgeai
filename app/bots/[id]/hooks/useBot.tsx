@@ -1,4 +1,5 @@
 import { Bot } from "@/app/types";
+import axios from "axios";
 import { useState, useEffect } from "react";
 
 export default function useBot(id: string) {
@@ -7,8 +8,8 @@ export default function useBot(id: string) {
 
   useEffect(() => {
     async function fetchBot() {
-      const response = await fetch(`/api/bots/${id}`);
-      const data = await response.json();
+      const response = await axios.get(`/api/bots/${id}`);
+      const data = await response.data;
       setBot(data);
       setLoading(false);
     }
