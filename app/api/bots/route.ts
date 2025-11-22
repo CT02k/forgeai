@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 import prisma from "@/app/lib/prisma";
@@ -21,7 +21,7 @@ export async function GET() {
   return NextResponse.json(bots);
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const { avatar, name, description, prompt } = await request.json();
 
   const cookieStore = await cookies();

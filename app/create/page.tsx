@@ -28,10 +28,7 @@ export default function CreateBotPage() {
     description,
     prompt,
   }: Omit<Bot, "id">) {
-    await axios.post("/api/bots", {
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ avatar, name, description, prompt }),
-    });
+    await axios.post("/api/bots", { avatar, name, description, prompt });
     loadBots();
   }
 

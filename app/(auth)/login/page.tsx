@@ -33,7 +33,7 @@ export default function LoginPage() {
 
     axios
       .post("/api/auth/login", {
-        body: JSON.stringify({ username, password }),
+        body: { username, password },
       })
       .then((res) => {
         if (res.status !== 200) {

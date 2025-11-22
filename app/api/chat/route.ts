@@ -29,10 +29,7 @@ export async function POST(req: NextRequest) {
   }
 
   if (bot.isBanned || bot.createdBy.isBanned) {
-    return NextResponse.json(
-      { error: "Bot unavailable." },
-      { status: 403 },
-    );
+    return NextResponse.json({ error: "Bot unavailable." }, { status: 403 });
   }
 
   if (!process.env.HACKCLUB_AI_API_KEY) {

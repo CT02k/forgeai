@@ -47,14 +47,9 @@ export default function useChat(id: string) {
 
     try {
       const response = await axios.post(`/api/chat/`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: trimmedMessage,
-          botId: id,
-          history: optimisticMessages.slice(-10),
-        }),
+        message: trimmedMessage,
+        botId: id,
+        history: optimisticMessages.slice(-10),
       });
       const data = await response.data;
 

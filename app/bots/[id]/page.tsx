@@ -29,9 +29,9 @@ export default function BotPage({
   } = useChat(id);
 
   return (
-    <main className="flex flex-col h-screen items-center justify-center">
+    <main className="flex flex-col pt-32 items-center justify-center">
       {!loading && bot ? (
-        <div className="w-1/2 bg-zinc-900 rounded-lg flex flex-col h-2/3">
+        <div className="w-1/2 bg-zinc-900 rounded-lg flex flex-col h-140">
           <BotHeader
             bot={bot}
             onClearChat={handleClearChat}

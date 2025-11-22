@@ -33,7 +33,7 @@ export default function RegisterPage() {
 
     axios
       .post("/api/auth", {
-        body: JSON.stringify({ username, password }),
+        body: { username, password },
       })
       .then((res) => {
         return res.data;
