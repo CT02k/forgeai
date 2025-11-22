@@ -21,11 +21,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <header className="flex justify-between">
-        <div></div>
-        <AuthCard />
-      </header>
-      <body className={`${montserrat.variable} antialiased`}>{children}</body>
+      <body className={`${montserrat.variable} antialiased`}>
+        <header className="flex justify-between">
+          <div></div>
+          <AuthCard />
+        </header>
+        {children}
+      </body>
     </html>
   );
 }

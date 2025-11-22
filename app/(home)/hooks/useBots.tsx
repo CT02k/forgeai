@@ -2,10 +2,12 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
-export default function TypingIndicator() {
+export default function useBots() {
   const [loading, setLoading] = useState(true);
   const [bots, setBots] = useState([]);
   const [search, setSearch] = useState("");
+
+  const [sortOrder, setSortOrder] = useState<"recent" | "oldest">("recent");
 
   const router = useRouter();
 
@@ -15,8 +17,7 @@ export default function TypingIndicator() {
 
     async function fetchBots() {
       const response = await axios.get("/api/bots");
-      const data = await response.data;
-      setBots(data);
+      setBots(response.data);
       setSearch(querySearch);
       setLoading(false);
     }
@@ -25,13 +26,10 @@ export default function TypingIndicator() {
   }, []);
 
   useEffect(() => {
-    if (search.trim() === "") {
-      router.replace("/");
-      return;
-    }
-
-    router.replace(`/?search=${encodeURIComponent(search)}`);
+    router.replace(
+      search.trim() === "" ? "/" : `/?search=${encodeURIComponent(search)}`,
+    );
   }, [search, router]);
 
-  return { bots, loading, search, setSearch };
+  return { bots, loading, search, setSearch, sortOrder, setSortOrder };
 }
