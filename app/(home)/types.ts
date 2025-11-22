@@ -1,6 +1,1 @@
-export interface Bot {
-  id: string;
-  name: string;
-  avatar: string;
-  description: string;
-}
+export type { Bot } from "@/app/types";

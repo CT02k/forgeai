@@ -1,6 +1,7 @@
 "use client";
 
 import { use } from "react";
+import Link from "next/link";
 
 import useBot from "./hooks/useBot";
 import useChat from "./hooks/useChat";
@@ -16,7 +17,7 @@ export default function BotPage({
 }) {
   const { id } = use(params);
 
-  const { bot, loading } = useBot(id);
+  const { bot, loading, error } = useBot(id);
   const {
     messages,
     loadingMessage,
@@ -57,8 +58,23 @@ export default function BotPage({
             onSendMessage={handleSendMessage}
           />
         </div>
-      ) : (
+      ) : loading ? (
         <div className="size-16 border-b-4 border-l-4 border-white rounded-full animate-spin"></div>
+      ) : (
+        <div className="w-full max-w-xl bg-zinc-900 border border-zinc-700 rounded-lg p-6 text-center">
+          <p className="text-lg font-semibold">
+            {error || "Bot not available."}
+          </p>
+          <p className="text-sm text-zinc-400 mt-2">
+            The bot may have been removido or está temporariamente indisponível.
+          </p>
+          <Link
+            href="/"
+            className="inline-block mt-4 px-4 py-2 bg-primary rounded-md text-white hover:opacity-80 transition"
+          >
+            Voltar
+          </Link>
+        </div>
       )}
       <div className="px-4 pb-4 text-center text-xs text-zinc-300 mt-3">
         Powered by{" "}

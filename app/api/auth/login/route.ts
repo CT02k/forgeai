@@ -26,8 +26,21 @@ export async function POST(req: NextRequest) {
     return new Response("Invalid credentials", { status: 401 });
   }
 
+  if (existing.isBanned) {
+    const cookieStore = await cookies();
+    cookieStore.set("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+    });
+    return new Response("Account banned", { status: 403 });
+  }
+
   const token = jwt.sign(
-    { id: existing.id, username } as Token,
+    {
+      id: existing.id,
+      username: existing.username,
+      role: existing.role,
+    } as Token,
     process.env.JWT_SECRET || "secret",
     {
       expiresIn: "7d",

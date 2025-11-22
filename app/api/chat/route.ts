@@ -13,11 +13,26 @@ export async function POST(req: NextRequest) {
 
   const bot = await prisma.chatBot.findUnique({
     where: { id: botId },
-    select: { prompt: true, name: true, description: true },
+    select: {
+      prompt: true,
+      name: true,
+      description: true,
+      isBanned: true,
+      createdBy: {
+        select: { isBanned: true },
+      },
+    },
   });
 
   if (!bot) {
     return NextResponse.json({ error: "BOT not found." }, { status: 404 });
+  }
+
+  if (bot.isBanned || bot.createdBy.isBanned) {
+    return NextResponse.json(
+      { error: "Bot unavailable." },
+      { status: 403 },
+    );
   }
 
   if (!process.env.HACKCLUB_AI_API_KEY) {

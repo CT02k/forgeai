@@ -21,6 +21,7 @@ export async function GET() {
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
       select: {
+        isBanned: true,
         chatBots: true,
       },
     });
@@ -29,7 +30,13 @@ export async function GET() {
       return new Response("User not found", { status: 404 });
     }
 
-    return new Response(JSON.stringify(user), { status: 200 });
+    if (user.isBanned) {
+      return new Response("Account banned", { status: 403 });
+    }
+
+    return new Response(JSON.stringify({ chatBots: user.chatBots }), {
+      status: 200,
+    });
   } catch (error) {
     console.error("JWT verification error:", error);
     return new Response("Invalid token", { status: 401 });
