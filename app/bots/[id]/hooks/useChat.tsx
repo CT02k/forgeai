@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 
 type ChatMessage = { role: "user" | "bot"; content: string };
@@ -12,14 +11,10 @@ export default function useChat(id: string) {
   const storeKey = `chat_history_${id}`;
 
   useEffect(() => {
-    async function loadHistory() {
-      const storedHistory = localStorage.getItem(storeKey);
-      if (storedHistory) {
-        setMessages(JSON.parse(storedHistory));
-      }
+    const storedHistory = localStorage.getItem(storeKey);
+    if (storedHistory) {
+      setMessages(JSON.parse(storedHistory));
     }
-
-    loadHistory();
   }, [storeKey]);
 
   async function handleSendMessage(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -34,6 +29,7 @@ export default function useChat(id: string) {
     const trimmedMessage = messageToSend.trim();
     if (!trimmedMessage) return;
 
+    const previousMessagesLength = messages.length;
     const optimisticMessages: ChatMessage[] = [
       ...messages,
       { role: "user", content: trimmedMessage },
@@ -46,29 +42,68 @@ export default function useChat(id: string) {
     scrollChatToBottom();
 
     try {
-      const response = await axios.post(`/api/chat/`, {
-        message: trimmedMessage,
-        botId: id,
-        history: optimisticMessages.slice(-10),
+      const response = await fetch(`/api/chat/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: trimmedMessage,
+          botId: id,
+          history: optimisticMessages.slice(-10),
+        }),
       });
-      const data = await response.data;
 
-      if (response.status !== 200 || data.error) {
-        throw new Error(data?.error || "Cannot generate a response.");
+      if (!response.ok) {
+        let serverMessage = "Cannot generate a response.";
+        try {
+          const data = await response.json();
+          serverMessage = data?.error || serverMessage;
+        } catch {
+          serverMessage = response.statusText || serverMessage;
+        }
+        throw new Error(serverMessage);
+      }
+
+      if (!response.body) {
+        throw new Error("Resposta vazia do servidor.");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let botContent = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        botContent += decoder.decode(value, { stream: true });
+        setMessages((prev) => {
+          const updated = [...prev];
+          const last = updated[updated.length - 1];
+          const botIndex =
+            last && last.role === "bot" ? updated.length - 1 : undefined;
+
+          if (botIndex !== undefined) {
+            updated[botIndex] = { role: "bot", content: botContent };
+          } else {
+            updated.push({ role: "bot", content: botContent });
+          }
+          return updated;
+        });
+        scrollChatToBottom();
       }
 
       setMessages((prev) => {
-        const updated = [
-          ...prev,
-          { role: "bot", content: data.answer } as const,
-        ];
+        const updated = [...prev];
+        const botIndex = updated.length - 1;
+        if (botIndex >= 0 && updated[botIndex].role === "bot") {
+          updated[botIndex] = { role: "bot", content: botContent };
+        }
         localStorage.setItem(storeKey, JSON.stringify(updated));
-        scrollChatToBottom();
         return updated;
       });
       setLoadingMessage(false);
     } catch (error) {
-      setMessages((prev) => prev.slice(0, -1));
+      setMessages((prev) => prev.slice(0, previousMessagesLength));
       setLoadingMessage(false);
       setErrorMessage(
         error instanceof Error

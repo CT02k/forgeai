@@ -79,12 +79,12 @@ export default function BotPage({
       <div className="px-4 pb-4 text-center text-xs text-zinc-300 mt-3">
         Powered by{" "}
         <a
-          href="https://ai.hackclub.com"
+          href="https://openai.com"
           target="_blank"
           rel="noreferrer"
           className="text-zinc-100 underline underline-offset-2"
         >
-          ai.hackclub.com
+          OpenAI
         </a>
       </div>
     </main>
