@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./markdown.css";
 import "./globals.css";
+import AuthCard from "./(home)/components/AuthCard";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -20,6 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <header className="flex justify-between">
+        <div></div>
+        <AuthCard />
+      </header>
       <body className={`${montserrat.variable} antialiased`}>{children}</body>
     </html>
   );

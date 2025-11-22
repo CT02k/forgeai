@@ -7,5 +7,5 @@ export async function getSession(): Promise<SessionData> {
 
   const data = res.status !== 200 ? false : res.data;
 
-  return data;
+  return data.user;
 }
