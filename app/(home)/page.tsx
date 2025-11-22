@@ -8,7 +8,7 @@ export default function Home() {
   const { bots, loading, search, setSearch } = useBots();
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen">
+    <main className="flex flex-col items-center justify-center pt-32">
       <Image src="/logo.png" alt="ForgeAI Logo" width={200} height={200} />
       <SearchInput search={search} setSearch={setSearch} />
       <BotGroup bots={bots} loading={loading} search={search} />
