@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { Token } from "@/app/types";
 import { ChatRole } from "@/.prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { ChatCompletionMessageParam } from "openai/resources";
 
 const openai = new OpenAI({
   apiKey: process.env.HACKCLUB_AI_API_KEY,
@@ -131,10 +132,12 @@ export async function POST(req: NextRequest) {
           role: "system",
           content: `Your info: You are a chatbot created by a ForgeAI user. Your name is ${bot.name}. Description: ${bot.description}.\n\nInstructions: ${prompt}\n\nQuestion:`,
         },
-        ...history.map((msg) => ({
-          role: msg.role === ChatRole.USER ? "user" : "assistant",
-          content: msg.content,
-        })),
+        ...history.map(
+          (msg): ChatCompletionMessageParam => ({
+            role: msg.role === ChatRole.USER ? "user" : "assistant",
+            content: msg.content,
+          }),
+        ),
       ],
       temperature: 0.7,
     });

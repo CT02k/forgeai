@@ -39,13 +39,19 @@ export default function CreateBotPage() {
 
   useEffect(() => {
     async function checkAuth() {
-      const res = await axios.get("/api/auth");
+      try {
+        const res = await axios.get("/api/auth");
 
-      if (res.status !== 200) {
+        if (res.status !== 200) {
+          router.push("/login");
+          return false;
+        }
+
+        return true;
+      } catch {
         router.push("/login");
         return false;
       }
-      return true;
     }
 
     async function loadData() {
