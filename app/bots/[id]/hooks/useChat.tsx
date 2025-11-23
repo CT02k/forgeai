@@ -41,7 +41,7 @@ export default function useChat({
     try {
       const response = await fetch("/api/chat/sessions");
       if (!response.ok) {
-        if (response.status === 401) return router.push("/");
+        if (response.status === 401) return router.push("/login");
         throw new Error("Could not load previous chats.");
       }
 
