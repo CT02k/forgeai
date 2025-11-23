@@ -2,6 +2,7 @@ import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { ChatMessage, ChatSessionSummary } from "@/app/types";
+import { useRouter } from "next/navigation";
 
 type UseChatOptions = {
   botId: string;
@@ -26,6 +27,8 @@ export default function useChat({
   );
   const [prefersNewChat, setPrefersNewChat] = useState(false);
 
+  const router = useRouter();
+
   useEffect(() => {
     setActiveChatId(chatId ?? undefined);
     if (chatId) {
@@ -38,6 +41,7 @@ export default function useChat({
     try {
       const response = await fetch("/api/chat/sessions");
       if (!response.ok) {
+        if (response.status === 401) return router.push("/");
         throw new Error("Could not load previous chats.");
       }
 
@@ -50,9 +54,7 @@ export default function useChat({
     } catch (error) {
       console.error("[CHAT_SESSIONS]", error);
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Could not load your chats.",
+        error instanceof Error ? error.message : "Could not load your chats.",
       );
     } finally {
       setLoadingSessions(false);
