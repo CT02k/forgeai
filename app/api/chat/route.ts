@@ -1,4 +1,7 @@
+import crypto from "node:crypto";
+
 import prisma from "@/app/lib/prisma";
+import { checkRateLimit } from "@/app/lib/redis";
 import OpenAI from "openai";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,11 +13,12 @@ const openai = new OpenAI({
 export async function POST(req: NextRequest) {
   const { message, botId, history: historyData } = await req.json();
 
-  const history =
-    (historyData as Array<{ role: "user" | "bot"; content: string }>).slice(
-      0,
-      10,
-    ) || [];
+  const history = Array.isArray(historyData)
+    ? (historyData as Array<{ role: "user" | "bot"; content: string }>).slice(
+        0,
+        10,
+      )
+    : [];
 
   const bot = await prisma.chatBot.findUnique({
     where: { id: botId },
@@ -51,6 +55,36 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const clientIdentifier =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    req.headers.get("x-real-ip") ||
+    "unknown";
+
+  const rateKey = `${botId}:${clientIdentifier}`;
+
+  try {
+    const rateResult = await checkRateLimit(rateKey, 20, 60);
+    if (!rateResult.allowed) {
+      return NextResponse.json(
+        { error: "Too many requests. Please wait a moment." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": `${rateResult.retryAfter}`,
+            "X-RateLimit-Limit": "20",
+            "X-RateLimit-Remaining": `${rateResult.remaining}`,
+          },
+        },
+      );
+    }
+  } catch (redisError) {
+    console.error("[CHAT_REDIS]", redisError);
+    return NextResponse.json(
+      { error: "Chat service unavailable. Please try again shortly." },
+      { status: 503 },
+    );
+  }
+
   const prompt = bot.prompt || "You are a helpful assistant.";
 
   try {
@@ -78,7 +112,6 @@ export async function POST(req: NextRequest) {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          // eslint-disable-next-line no-restricted-syntax
           for await (const chunk of completion) {
             const content = chunk.choices[0]?.delta?.content;
             if (content) {
@@ -88,9 +121,9 @@ export async function POST(req: NextRequest) {
         } catch (streamError) {
           console.error("[CHAT_STREAM]", streamError);
           controller.error(streamError);
-        } finally {
-          controller.close();
         }
+
+        controller.close();
       },
     });
 
