@@ -207,6 +207,7 @@ export type ChatBotWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ChatBot"> | Date | string
   isBanned?: Prisma.BoolFilter<"ChatBot"> | boolean
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  sessions?: Prisma.ChatSessionListRelationFilter
 }
 
 export type ChatBotOrderByWithRelationInput = {
@@ -219,6 +220,7 @@ export type ChatBotOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   isBanned?: Prisma.SortOrder
   createdBy?: Prisma.UserOrderByWithRelationInput
+  sessions?: Prisma.ChatSessionOrderByRelationAggregateInput
 }
 
 export type ChatBotWhereUniqueInput = Prisma.AtLeast<{
@@ -234,6 +236,7 @@ export type ChatBotWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"ChatBot"> | Date | string
   isBanned?: Prisma.BoolFilter<"ChatBot"> | boolean
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  sessions?: Prisma.ChatSessionListRelationFilter
 }, "id">
 
 export type ChatBotOrderByWithAggregationInput = {
@@ -273,6 +276,7 @@ export type ChatBotCreateInput = {
   createdAt?: Date | string
   isBanned?: boolean
   createdBy: Prisma.UserCreateNestedOneWithoutChatBotsInput
+  sessions?: Prisma.ChatSessionCreateNestedManyWithoutBotInput
 }
 
 export type ChatBotUncheckedCreateInput = {
@@ -284,6 +288,7 @@ export type ChatBotUncheckedCreateInput = {
   createdById: string
   createdAt?: Date | string
   isBanned?: boolean
+  sessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutBotInput
 }
 
 export type ChatBotUpdateInput = {
@@ -295,6 +300,7 @@ export type ChatBotUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdBy?: Prisma.UserUpdateOneRequiredWithoutChatBotsNestedInput
+  sessions?: Prisma.ChatSessionUpdateManyWithoutBotNestedInput
 }
 
 export type ChatBotUncheckedUpdateInput = {
@@ -306,6 +312,7 @@ export type ChatBotUncheckedUpdateInput = {
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutBotNestedInput
 }
 
 export type ChatBotCreateManyInput = {
@@ -383,6 +390,11 @@ export type ChatBotMinOrderByAggregateInput = {
   isBanned?: Prisma.SortOrder
 }
 
+export type ChatBotScalarRelationFilter = {
+  is?: Prisma.ChatBotWhereInput
+  isNot?: Prisma.ChatBotWhereInput
+}
+
 export type ChatBotCreateNestedManyWithoutCreatedByInput = {
   create?: Prisma.XOR<Prisma.ChatBotCreateWithoutCreatedByInput, Prisma.ChatBotUncheckedCreateWithoutCreatedByInput> | Prisma.ChatBotCreateWithoutCreatedByInput[] | Prisma.ChatBotUncheckedCreateWithoutCreatedByInput[]
   connectOrCreate?: Prisma.ChatBotCreateOrConnectWithoutCreatedByInput | Prisma.ChatBotCreateOrConnectWithoutCreatedByInput[]
@@ -425,6 +437,20 @@ export type ChatBotUncheckedUpdateManyWithoutCreatedByNestedInput = {
   deleteMany?: Prisma.ChatBotScalarWhereInput | Prisma.ChatBotScalarWhereInput[]
 }
 
+export type ChatBotCreateNestedOneWithoutSessionsInput = {
+  create?: Prisma.XOR<Prisma.ChatBotCreateWithoutSessionsInput, Prisma.ChatBotUncheckedCreateWithoutSessionsInput>
+  connectOrCreate?: Prisma.ChatBotCreateOrConnectWithoutSessionsInput
+  connect?: Prisma.ChatBotWhereUniqueInput
+}
+
+export type ChatBotUpdateOneRequiredWithoutSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ChatBotCreateWithoutSessionsInput, Prisma.ChatBotUncheckedCreateWithoutSessionsInput>
+  connectOrCreate?: Prisma.ChatBotCreateOrConnectWithoutSessionsInput
+  upsert?: Prisma.ChatBotUpsertWithoutSessionsInput
+  connect?: Prisma.ChatBotWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ChatBotUpdateToOneWithWhereWithoutSessionsInput, Prisma.ChatBotUpdateWithoutSessionsInput>, Prisma.ChatBotUncheckedUpdateWithoutSessionsInput>
+}
+
 export type ChatBotCreateWithoutCreatedByInput = {
   id?: string
   avatar: string
@@ -433,6 +459,7 @@ export type ChatBotCreateWithoutCreatedByInput = {
   prompt: string
   createdAt?: Date | string
   isBanned?: boolean
+  sessions?: Prisma.ChatSessionCreateNestedManyWithoutBotInput
 }
 
 export type ChatBotUncheckedCreateWithoutCreatedByInput = {
@@ -443,6 +470,7 @@ export type ChatBotUncheckedCreateWithoutCreatedByInput = {
   prompt: string
   createdAt?: Date | string
   isBanned?: boolean
+  sessions?: Prisma.ChatSessionUncheckedCreateNestedManyWithoutBotInput
 }
 
 export type ChatBotCreateOrConnectWithoutCreatedByInput = {
@@ -485,6 +513,66 @@ export type ChatBotScalarWhereInput = {
   isBanned?: Prisma.BoolFilter<"ChatBot"> | boolean
 }
 
+export type ChatBotCreateWithoutSessionsInput = {
+  id?: string
+  avatar: string
+  name: string
+  description: string
+  prompt: string
+  createdAt?: Date | string
+  isBanned?: boolean
+  createdBy: Prisma.UserCreateNestedOneWithoutChatBotsInput
+}
+
+export type ChatBotUncheckedCreateWithoutSessionsInput = {
+  id?: string
+  avatar: string
+  name: string
+  description: string
+  prompt: string
+  createdById: string
+  createdAt?: Date | string
+  isBanned?: boolean
+}
+
+export type ChatBotCreateOrConnectWithoutSessionsInput = {
+  where: Prisma.ChatBotWhereUniqueInput
+  create: Prisma.XOR<Prisma.ChatBotCreateWithoutSessionsInput, Prisma.ChatBotUncheckedCreateWithoutSessionsInput>
+}
+
+export type ChatBotUpsertWithoutSessionsInput = {
+  update: Prisma.XOR<Prisma.ChatBotUpdateWithoutSessionsInput, Prisma.ChatBotUncheckedUpdateWithoutSessionsInput>
+  create: Prisma.XOR<Prisma.ChatBotCreateWithoutSessionsInput, Prisma.ChatBotUncheckedCreateWithoutSessionsInput>
+  where?: Prisma.ChatBotWhereInput
+}
+
+export type ChatBotUpdateToOneWithWhereWithoutSessionsInput = {
+  where?: Prisma.ChatBotWhereInput
+  data: Prisma.XOR<Prisma.ChatBotUpdateWithoutSessionsInput, Prisma.ChatBotUncheckedUpdateWithoutSessionsInput>
+}
+
+export type ChatBotUpdateWithoutSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdBy?: Prisma.UserUpdateOneRequiredWithoutChatBotsNestedInput
+}
+
+export type ChatBotUncheckedUpdateWithoutSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  avatar?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.StringFieldUpdateOperationsInput | string
+  createdById?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
 export type ChatBotCreateManyCreatedByInput = {
   id?: string
   avatar: string
@@ -503,6 +591,7 @@ export type ChatBotUpdateWithoutCreatedByInput = {
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.ChatSessionUpdateManyWithoutBotNestedInput
 }
 
 export type ChatBotUncheckedUpdateWithoutCreatedByInput = {
@@ -513,6 +602,7 @@ export type ChatBotUncheckedUpdateWithoutCreatedByInput = {
   prompt?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   isBanned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.ChatSessionUncheckedUpdateManyWithoutBotNestedInput
 }
 
 export type ChatBotUncheckedUpdateManyWithoutCreatedByInput = {
@@ -526,6 +616,35 @@ export type ChatBotUncheckedUpdateManyWithoutCreatedByInput = {
 }
 
 
+/**
+ * Count Type ChatBotCountOutputType
+ */
+
+export type ChatBotCountOutputType = {
+  sessions: number
+}
+
+export type ChatBotCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  sessions?: boolean | ChatBotCountOutputTypeCountSessionsArgs
+}
+
+/**
+ * ChatBotCountOutputType without action
+ */
+export type ChatBotCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatBotCountOutputType
+   */
+  select?: Prisma.ChatBotCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ChatBotCountOutputType without action
+ */
+export type ChatBotCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatSessionWhereInput
+}
+
 
 export type ChatBotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -537,6 +656,8 @@ export type ChatBotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   isBanned?: boolean
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sessions?: boolean | Prisma.ChatBot$sessionsArgs<ExtArgs>
+  _count?: boolean | Prisma.ChatBotCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["chatBot"]>
 
 export type ChatBotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -577,6 +698,8 @@ export type ChatBotSelectScalar = {
 export type ChatBotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "avatar" | "name" | "description" | "prompt" | "createdById" | "createdAt" | "isBanned", ExtArgs["result"]["chatBot"]>
 export type ChatBotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  sessions?: boolean | Prisma.ChatBot$sessionsArgs<ExtArgs>
+  _count?: boolean | Prisma.ChatBotCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ChatBotIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -589,6 +712,7 @@ export type $ChatBotPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "ChatBot"
   objects: {
     createdBy: Prisma.$UserPayload<ExtArgs>
+    sessions: Prisma.$ChatSessionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -994,6 +1118,7 @@ readonly fields: ChatBotFieldRefs;
 export interface Prisma__ChatBotClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  sessions<T extends Prisma.ChatBot$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ChatBot$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1424,6 +1549,30 @@ export type ChatBotDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many ChatBots to delete.
    */
   limit?: number
+}
+
+/**
+ * ChatBot.sessions
+ */
+export type ChatBot$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChatSession
+   */
+  select?: Prisma.ChatSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChatSession
+   */
+  omit?: Prisma.ChatSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatSessionInclude<ExtArgs> | null
+  where?: Prisma.ChatSessionWhereInput
+  orderBy?: Prisma.ChatSessionOrderByWithRelationInput | Prisma.ChatSessionOrderByWithRelationInput[]
+  cursor?: Prisma.ChatSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatSessionScalarFieldEnum | Prisma.ChatSessionScalarFieldEnum[]
 }
 
 /**

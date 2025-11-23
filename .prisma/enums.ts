@@ -15,3 +15,11 @@ export const Role = {
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const ChatRole = {
+  USER: 'USER',
+  BOT: 'BOT'
+} as const
+
+export type ChatRole = (typeof ChatRole)[keyof typeof ChatRole]

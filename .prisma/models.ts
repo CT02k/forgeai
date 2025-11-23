@@ -10,4 +10,6 @@
  */
 export type * from './models/User'
 export type * from './models/ChatBot'
+export type * from './models/ChatSession'
+export type * from './models/ChatMessage'
 export type * from './commonInputTypes'

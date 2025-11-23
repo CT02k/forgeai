@@ -32,9 +32,7 @@ export default function LoginPage() {
     const password = formData.get("password");
 
     axios
-      .post("/api/auth/login", {
-        body: { username, password },
-      })
+      .post("/api/auth/login", { username, password })
       .then((res) => {
         if (res.status !== 200) {
           throw new Error("Login failed");

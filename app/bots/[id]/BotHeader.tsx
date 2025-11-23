@@ -29,9 +29,9 @@ export default function BotHeader({
         type="button"
         onClick={onClearChat}
         disabled={!canClear}
-        className="px-4 py-2 text-sm font-semibold text-white bg-red-600/80 hover:bg-red-600 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition"
+        className="px-4 py-2 text-sm font-semibold text-white bg-primary hover:opacity-90 rounded-md disabled:opacity-50 disabled:cursor-not-allowed transition"
       >
-        Clean
+        New chat
       </button>
     </div>
   );

@@ -32,9 +32,7 @@ export default function RegisterPage() {
     const password = formData.get("password");
 
     axios
-      .post("/api/auth", {
-        body: { username, password },
-      })
+      .post("/api/auth/login", { username, password })
       .then((res) => {
         return res.data;
       })

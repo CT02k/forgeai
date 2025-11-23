@@ -4,8 +4,23 @@ import { cookies } from "next/headers";
 import prisma from "@/app/lib/prisma";
 import jwt from "jsonwebtoken";
 import { Token } from "@/app/types";
+import { getCachedString, setCachedString } from "@/app/lib/redis";
 
 export async function GET() {
+  const cacheKey = "bots:list:public";
+
+  try {
+    const cached = await getCachedString(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      return NextResponse.json(parsed, {
+        headers: { "X-Cache": "HIT" },
+      });
+    }
+  } catch (cacheReadError) {
+    console.error("[BOTS_CACHE_READ]", cacheReadError);
+  }
+
   const bots = await prisma.chatBot.findMany({
     where: {
       isBanned: false,
@@ -17,6 +32,12 @@ export async function GET() {
       createdAt: "desc",
     },
   });
+
+  try {
+    await setCachedString(cacheKey, JSON.stringify(bots), 60);
+  } catch (cacheWriteError) {
+    console.error("[BOTS_CACHE_WRITE]", cacheWriteError);
+  }
 
   return NextResponse.json(bots);
 }

@@ -1,8 +1,10 @@
-import crypto from "node:crypto";
-
 import prisma from "@/app/lib/prisma";
 import { checkRateLimit } from "@/app/lib/redis";
 import OpenAI from "openai";
+import { cookies } from "next/headers";
+import jwt from "jsonwebtoken";
+import { Token } from "@/app/types";
+import { ChatRole } from "@/.prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const openai = new OpenAI({
@@ -11,47 +13,39 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: NextRequest) {
-  const { message, botId, history: historyData } = await req.json();
+  const { message, botId, chatId } = await req.json();
+  const trimmedMessage = typeof message === "string" ? message.trim() : "";
 
-  const history = Array.isArray(historyData)
-    ? (historyData as Array<{ role: "user" | "bot"; content: string }>).slice(
-        0,
-        10,
-      )
-    : [];
-
-  const bot = await prisma.chatBot.findUnique({
-    where: { id: botId },
-    select: {
-      prompt: true,
-      name: true,
-      description: true,
-      isBanned: true,
-      createdBy: {
-        select: { isBanned: true },
-      },
-    },
-  });
-
-  if (!bot) {
-    return NextResponse.json({ error: "BOT not found." }, { status: 404 });
-  }
-
-  if (bot.isBanned || bot.createdBy.isBanned) {
-    return NextResponse.json({ error: "Bot unavailable." }, { status: 403 });
-  }
-
-  if (!process.env.HACKCLUB_AI_API_KEY) {
-    return NextResponse.json(
-      { error: "HACKCLUB_AI_API_KEY not configured." },
-      { status: 500 },
-    );
-  }
-
-  if (!message) {
+  if (!trimmedMessage) {
     return NextResponse.json(
       { error: "A message is required." },
       { status: 400 },
+    );
+  }
+
+  const cookieStore = await cookies();
+  const tokenValue = cookieStore.get("token")?.value || "";
+
+  let token: Token | null = null;
+
+  try {
+    token = jwt.verify(tokenValue, process.env.JWT_SECRET || "secret") as Token;
+  } catch {
+    return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: token?.id },
+    select: {
+      id: true,
+      isBanned: true,
+    },
+  });
+
+  if (!user || user.isBanned) {
+    return NextResponse.json(
+      { error: "Not authorized to chat." },
+      { status: 403 },
     );
   }
 
@@ -60,7 +54,24 @@ export async function POST(req: NextRequest) {
     req.headers.get("x-real-ip") ||
     "unknown";
 
-  const rateKey = `${botId}:${clientIdentifier}`;
+  const session = await resolveSession(chatId, botId, user.id);
+  if ("error" in session) {
+    return NextResponse.json(
+      { error: session.error },
+      { status: session.status },
+    );
+  }
+
+  const bot = session.bot;
+
+  if (!process.env.HACKCLUB_AI_API_KEY) {
+    return NextResponse.json(
+      { error: "HACKCLUB_AI_API_KEY not configured." },
+      { status: 500 },
+    );
+  }
+
+  const rateKey = `${bot.id}:${clientIdentifier}`;
 
   try {
     const rateResult = await checkRateLimit(rateKey, 20, 60);
@@ -87,6 +98,30 @@ export async function POST(req: NextRequest) {
 
   const prompt = bot.prompt || "You are a helpful assistant.";
 
+  const previousMessages = await prisma.chatMessage.findMany({
+    where: { sessionId: session.id },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+  });
+
+  await prisma.chatMessage.create({
+    data: {
+      content: trimmedMessage,
+      role: ChatRole.USER,
+      sessionId: session.id,
+    },
+  });
+
+  await prisma.chatSession.update({
+    where: { id: session.id },
+    data: { updatedAt: new Date() },
+  });
+
+  const history = [
+    ...previousMessages.reverse(),
+    { content: trimmedMessage, role: ChatRole.USER },
+  ];
+
   try {
     const completion = await openai.chat.completions.create({
       model: "google/gemini-2.5-flash",
@@ -94,36 +129,53 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `Suas informacoes: Voce e um chatbot criado por um usuario da ForgeAI, seu nome e ${bot.name}. Descricao: ${bot.description}. \n\n Instrucoes: ${prompt}\n\nPergunta: `,
+          content: `Your info: You are a chatbot created by a ForgeAI user. Your name is ${bot.name}. Description: ${bot.description}.\n\nInstructions: ${prompt}\n\nQuestion:`,
         },
         ...history.map((msg) => ({
-          role: msg.role === "user" ? "user" : "assistant",
+          role: msg.role === ChatRole.USER ? "user" : "assistant",
           content: msg.content,
         })),
-        {
-          role: "user",
-          content: `${message}`,
-        },
       ],
       temperature: 0.7,
     });
 
     const encoder = new TextEncoder();
+    let botContent = "";
+
     const stream = new ReadableStream({
       async start(controller) {
         try {
           for await (const chunk of completion) {
             const content = chunk.choices[0]?.delta?.content;
             if (content) {
+              botContent += content;
               controller.enqueue(encoder.encode(content));
             }
           }
         } catch (streamError) {
           console.error("[CHAT_STREAM]", streamError);
           controller.error(streamError);
+          return;
         }
 
         controller.close();
+
+        try {
+          await prisma.chatMessage.create({
+            data: {
+              content: botContent,
+              role: ChatRole.BOT,
+              sessionId: session.id,
+            },
+          });
+
+          await prisma.chatSession.update({
+            where: { id: session.id },
+            data: { updatedAt: new Date() },
+          });
+        } catch (storeError) {
+          console.error("[CHAT_STREAM_STORE]", storeError);
+        }
       },
     });
 
@@ -131,6 +183,7 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-cache",
+        "X-Chat-Id": session.id,
       },
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -146,4 +199,64 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+async function resolveSession(
+  chatId: string | undefined,
+  botId: string | undefined,
+  userId: string,
+) {
+  if (chatId) {
+    const existing = await prisma.chatSession.findUnique({
+      where: { id: chatId },
+      include: {
+        bot: {
+          include: {
+            createdBy: { select: { isBanned: true } },
+          },
+        },
+      },
+    });
+
+    if (!existing || existing.userId !== userId) {
+      return { error: "Chat not found.", status: 404 } as const;
+    }
+
+    if (existing.bot.isBanned || existing.bot.createdBy.isBanned) {
+      return { error: "Bot unavailable.", status: 403 } as const;
+    }
+
+    return { id: existing.id, bot: existing.bot };
+  }
+
+  if (!botId) {
+    return {
+      error: "A botId is required to start a chat.",
+      status: 400,
+    } as const;
+  }
+
+  const bot = await prisma.chatBot.findUnique({
+    where: { id: botId },
+    include: {
+      createdBy: { select: { isBanned: true } },
+    },
+  });
+
+  if (!bot) {
+    return { error: "Bot not found.", status: 404 } as const;
+  }
+
+  if (bot.isBanned || bot.createdBy.isBanned) {
+    return { error: "Bot unavailable.", status: 403 } as const;
+  }
+
+  const newSession = await prisma.chatSession.create({
+    data: {
+      botId: bot.id,
+      userId,
+    },
+  });
+
+  return { id: newSession.id, bot };
 }

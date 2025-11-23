@@ -54,3 +54,13 @@ export type User = Prisma.UserModel
  * 
  */
 export type ChatBot = Prisma.ChatBotModel
+/**
+ * Model ChatSession
+ * 
+ */
+export type ChatSession = Prisma.ChatSessionModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel

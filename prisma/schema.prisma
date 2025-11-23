@@ -20,13 +20,14 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  username  String   @unique
-  password  String
-  chatBots  ChatBot[]
-  role      Role     @default(USER)
-  isBanned  Boolean  @default(false)
-  createdAt DateTime @default(now())
+  id            String         @id @default(uuid())
+  username      String         @unique
+  password      String
+  chatBots      ChatBot[]
+  chatSessions  ChatSession[]
+  role          Role           @default(USER)
+  isBanned      Boolean        @default(false)
+  createdAt     DateTime       @default(now())
 }
 
 model ChatBot {
@@ -39,4 +40,30 @@ model ChatBot {
   createdById String
   createdAt   DateTime @default(now())
   isBanned    Boolean  @default(false)
+  sessions    ChatSession[]
+}
+
+enum ChatRole {
+  USER
+  BOT
+}
+
+model ChatSession {
+  id        String        @id @default(uuid())
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  bot       ChatBot       @relation(fields: [botId], references: [id], onDelete: Cascade)
+  botId     String
+  messages  ChatMessage[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model ChatMessage {
+  id        String     @id @default(uuid())
+  content   String
+  role      ChatRole
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String
+  createdAt DateTime    @default(now())
 }

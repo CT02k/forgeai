@@ -20,3 +20,23 @@ export interface Token {
   username: string;
   role: Role;
 }
+
+export type ChatRole = "user" | "bot";
+
+export interface ChatMessage {
+  id?: string;
+  role: ChatRole;
+  content: string;
+  createdAt?: string | Date;
+}
+
+export interface ChatSessionSummary {
+  id: string;
+  bot: {
+    id: string;
+    name: string;
+    avatar: string;
+  };
+  lastMessage?: string;
+  updatedAt: string;
+}

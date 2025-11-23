@@ -138,7 +138,7 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-white p-6 md:p-10">
+    <main className="min-h-full bg-zinc-950 text-white p-6 md:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
         <header className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
