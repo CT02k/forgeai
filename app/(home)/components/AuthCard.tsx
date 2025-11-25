@@ -23,7 +23,7 @@ export default function AuthCard() {
       <div className="flex gap-2 m-5">
         <Link
           className="flex items-center py-2 px-6 rounded-full bg-zinc-800 text-white cursor-pointer transition hover:opacity-80"
-          href="/login"
+          href="/register"
         >
           Create Account
         </Link>

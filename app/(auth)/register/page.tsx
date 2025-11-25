@@ -32,7 +32,7 @@ export default function RegisterPage() {
     const password = formData.get("password");
 
     axios
-      .post("/api/auth/login", { username, password })
+      .post("/api/auth", { username, password })
       .then((res) => {
         return res.data;
       })
@@ -73,7 +73,7 @@ export default function RegisterPage() {
           />
           <input
             type="submit"
-            value="Login"
+            value="Register"
             className="mt-6 bg-primary text-white rounded-lg px-4 py-2 hover:opacity-80 cursor-pointer w-full transition"
           />
           <p className="text-white mt-2">
