@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `Your info: You are a chatbot created by a ForgeAI user. Your name is ${bot.name}. Description: ${bot.description}.\n\nInstructions: ${prompt}\n\nQuestion:`,
+          content: `Your info: You are a chatbot created by a ForgeAI user. Respond always in the user language, excecpt the prompt explicit don't permit. Your name is ${bot.name}. Description: ${bot.description}.\n\nInstructions: ${prompt}\n\nQuestion:`,
         },
         ...history.map(
           (msg): ChatCompletionMessageParam => ({
